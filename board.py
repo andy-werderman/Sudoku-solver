@@ -6,7 +6,41 @@ class Board:
     '''
     
     def __init__(self):
-        self.grid = [[[1,2,3,4,5,6,7,8,9] for i in range(9)] for j in range(9)]
+        
+        # init every cell to have possible values 1..9
+        self.grid = [[list(range(1,10)) for i in range(9)] for j in range(9)]
+
+        '''
+        1. Take new board instance as input
+        2. Read inital cell values from std_in
+        3. Set initial board values
+        '''
+
+        print("Provide each row of the board below using a single x for an empty cell. Press enter to continue to the next row.")
+
+        # row index
+        r = 0
+
+        while (r < 9):
+            row = input("Row" + str(r+1) + ": ")
+
+            try: 
+                if(len(row) != 9):
+                    raise Exception("Input character count not equal to 9.") 
+
+                for c,val in enumerate(row):
+                        if val.isnumeric():
+                            # string char is forced to be single digit. 
+                            # Only numberic invalid char is 0.
+                            if (int(val) != 0):
+                                self.set_value(r,c,int(val))
+                            else:
+                                raise Exception("Integer cell value cannot be 0.")
+
+                # increment row index
+                r += 1
+            except Exception as reason:
+                print("ERROR: Bad input. " + str(reason) + " Please try again.")
     # end function
 
             
