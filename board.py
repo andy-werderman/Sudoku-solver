@@ -92,54 +92,61 @@ class Board:
     
     
     def get_row(self,r):
-        row = list()
+        '''
+            input: row index
+            output: returns dict containing the cells in the respective row. keys are a tuple of the (row,col) indices in the grid
+        '''
+        row = dict()
         
         for i in range(9):
-            row.append(self.grid[r][i])
+            row[(r,i)].append(self.grid[r][i])
         
         return row
     # end function
         
         
     def get_col(self,c):
-        col = list()
+        '''
+            input: col index
+            output: returns dict containing the cells in the respective column. keys are a tuple of the (row,col) indices in the grid
+        '''
+        col = dict()
         
         for i in range(9):
-            col.append(self.grid[i][c])
+            col[(i,c)].append(self.grid[i][c])
         
         return col
     # end function
     
     
-    def get_square(self,row,col):
+    def get_square(self,r_index,c_index):
         '''
             input: row, col indices
-            output: returns list containing the cells in the respective square 
+            output: returns dict containing the cells in the respective square. keys are a tuple of the (row,col) indices in the grid
         
             Note: we are numbering each 3x3 square on the soduko board from the top left to bottom right 0-8. 
         '''
-        square = list()
+        square = dict()
         square_index_mapping = {0:[0,1,2], 1:[0,1,2], 2:[0,1,2], 3:[3,4,5], 4:[3,4,5], 5:[3,4,5], 6:[6,7,8], 7:[6,7,8], 8:[6,7,8]}
         
         # get ranges for square
-        rows = square_index_mapping[row]
-        cols = square_index_mapping[col]
+        rows = square_index_mapping[r_index]
+        cols = square_index_mapping[c_index]
         
         # get square values
         for r in rows:
             for c in cols:
-                square.append(self.grid[r][c])
+                square[(r,c)].append(self.grid[r][c])
         
         return square
     # end function
 
 
-    @staticmethod
-    def remove_possible_value(collection,val):
+    def remove_possible_value(self,collection,val):
         # remove value from each possibility list in a given row, col, or square
-        for cell in collection:
-            if ((type(cell) == list) and (val in cell)):
-                cell.remove(val)
+        for loc in collection:
+            if ((type(collection[loc]) == list) and (val in collection[loc])):
+                self.grid[loc[0]][loc[1]].remove(val)
     # end function
 
     
@@ -169,7 +176,7 @@ class Board:
         return True
     # end function
 
-    
+
     def set_obvious_singles(self):
         '''
         find cells whose values is a singleton list. set cell to be that value.
