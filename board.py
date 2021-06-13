@@ -1,4 +1,31 @@
-# exec(open("C:/Users/AWerder1/Documents/Sudoku/board.py").read())
+# exec(open("C:/Users/********/Documents/Sudoku/board.py").read())
+
+##---------------------------------------------- Helper Functions ----------------------------------------------
+def map_poss_locs_for_vals(collection):
+    '''
+    Build dict of *possible* locations for each number
+
+    var:
+        collection -- dict representing a single row, column, or square. keys are a tuple of the (row,col) indices in the grid
+            
+    return: 
+        dict of *possible* locations/boxes for each num.
+    '''
+    
+    poss_locs_for_vals = {1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
+        
+    for loc in collection:
+        cell = collection[loc]
+        if (type(cell) == list):
+            for num in cell:
+                poss_locs_for_vals[num].append(loc)
+    # end for loop recording locations of poss_locs_for_vals
+    
+    return poss_locs_for_vals
+# end function map_poss_locs_for_vals
+
+
+##---------------------------------------------- Board Class ----------------------------------------------
 
 class Board:
     '''
@@ -99,7 +126,7 @@ class Board:
         row = dict()
         
         for i in range(9):
-            row[(r,i)].append(self.grid[r][i])
+            row[(r,i)] = self.grid[r][i]
         
         return row
     # end function
@@ -113,7 +140,7 @@ class Board:
         col = dict()
         
         for i in range(9):
-            col[(i,c)].append(self.grid[i][c])
+            col[(i,c)] = self.grid[i][c]
         
         return col
     # end function
@@ -136,23 +163,29 @@ class Board:
         # get square values
         for r in rows:
             for c in cols:
-                square[(r,c)].append(self.grid[r][c])
+                square[(r,c)] = self.grid[r][c]
         
         return square
     # end function
 
 
     def remove_possible_value(self,collection,val):
+        '''
+        input: collection - dict. Keys are (row,col) coordinate tuples.
+        input: val - int. 
+        '''
+
         # remove value from each possibility list in a given row, col, or square
         for loc in collection:
-            if ((type(collection[loc]) == list) and (val in collection[loc])):
-                self.grid[loc[0]][loc[1]].remove(val)
+            r,c = loc
+            cell = collection[loc]
+            if ((type(cell) == list) and (val in cell)):
+                self.grid[r][c].remove(val)
     # end function
 
     
     def set_value(self,r,c,val):
-        # set values
-        self.grid[r][c] = val
+        # set value
         self.grid[r][c] = val
     
         # remove value as possibility from row col square
@@ -175,6 +208,37 @@ class Board:
                     return False
         return True
     # end function
+
+
+    def find_hidden_singles(self,collection):
+        '''
+        Search: num has only one possible location/box in collection
+        Action: set list to be singleton containing num
+
+        Vars:
+            collection -
+                * Type: dicts one of row_values_dict, col_values_dict, square_values_dict
+                * Purpose: list of dicts containing possible locations/boxes for each num in respective collection
+        '''
+
+        poss_locs_for_vals = map_poss_locs_for_vals(collection)
+
+        for num in poss_locs_for_vals:
+            locations = poss_locs_for_vals[num]
+            if(len(locations) == 1):
+                # there's 1 possible cell for this number. 
+                # set possible value list to singleton in this cell.
+                r, c = locations[0]
+                self.grid[r][c] = [num]
+    # end function find_hidden_singles
+
+
+    def find_hidden_doubles(collection):
+        return None
+
+
+    def find_hidden_triples(collection):
+        return None
 
 
     def set_obvious_singles(self):
